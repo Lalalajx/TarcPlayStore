@@ -1,0 +1,9 @@
+{
+    "MQTTServerUrl": "tcp://tarcsc.com:1883",
+    "MQTTTopic": "MY/TARUC/RAT/MYTARUC00000001/PRI",
+
+    "DatabaseServerUrl": "jdbc:mysql://tarcsc.com:3306/",
+    "DatabaseUser": "jiaxin",
+    "DatabasePassword": "jx123",
+    "DatabaseName": "tarcsc"
+}

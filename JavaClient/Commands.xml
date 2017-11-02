@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<command_list>
+    <command>
+        <name>RAT_USER_LOGIN</name>
+        <cmdbyte>00041006</cmdbyte>
+        <payload>3030303431303036</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command>
+
+    <command>
+        <name>RAT_USER_AUTHREQUEST_RESPONSE</name>
+        <cmdbyte>00041009</cmdbyte>
+        <payload>3030303431303039</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command>
+    
+    <command>
+        <name>RAT_USER_AUTHREQUEST</name>
+        <cmdbyte>00041007</cmdbyte>
+        <payload>3030303431303037</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command>
+    
+    <command>
+        <name>RAT_USER_AUTHREQUEST_ACK</name>
+        <cmdbyte>00041008</cmdbyte>
+        <payload>3030303431303038</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command>    
+    
+    <command>
+        <name>RAT_USER_AUTHREQUEST_RETRY</name>
+        <cmdbyte>00041023</cmdbyte>
+        <payload>3030303431303233</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command>  
+    
+    <command>
+        <name>RAT_USER_RETRIEVEPASS</name>
+        <cmdbyte>00041010</cmdbyte>
+        <payload>3030303431303130</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command>  
+    
+    <command>
+        <name>RAT_USER_RETRIEVEPASS_VERIFICATION</name>
+        <cmdbyte>00041011</cmdbyte>
+        <payload>3030303431303131</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command>  
+    
+    <command>
+        <name>RAT_USER_CHGPASS</name>
+        <cmdbyte>00041024</cmdbyte>
+        <payload>3030303431303234</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command> 
+    
+    <command>
+        <name>RAT_USER_CHGPASS_ACK</name>
+        <cmdbyte>00041025</cmdbyte>
+        <payload>3030303431303235</payload>
+        <reserve>303030303030303030303030303030303030303030303030</reserve>
+    </command> 
+    
+    
+    
+</command_list>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.rongfu.tarucplaystore.Activity.LoginActivity">
+
+        <EditText
+            android:id="@+id/login_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="98dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="Username"
+            tools:layout_editor_absoluteX="75dp"
+            tools:layout_editor_absoluteY="108dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/login_password" />
+
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/login_username"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="33dp"
+            android:ems="10"
+            android:hint="Password"
+            android:inputType="textPassword"
+            tools:layout_editor_absoluteX="75dp"
+            tools:layout_editor_absoluteY="183dp" />
+
+        <Button
+            android:id="@+id/button_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LOGIN"
+            tools:layout_editor_absoluteX="146dp"
+            tools:layout_editor_absoluteY="278dp"
+            android:layout_centerVertical="true"
+            android:layout_alignEnd="@+id/login_password"
+            android:layout_marginEnd="11dp" />
+
+        <Button
+            android:id="@+id/btn_forgetPass"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/button_login"
+            android:layout_alignBottom="@+id/button_login"
+            android:layout_marginEnd="13dp"
+            android:layout_toStartOf="@+id/button_login"
+            android:text="Forgot Password"
+            android:visibility="visible" />
+
+</RelativeLayout>

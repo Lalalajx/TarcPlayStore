@@ -12,10 +12,6 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONObject;
 
-/**
- *
- * @author ahxin_000
- */
 public class JavaClient implements MqttCallbackExtended {
     
     private MqttClient client;
@@ -106,8 +102,9 @@ public class JavaClient implements MqttCallbackExtended {
                 System.out.println(TimeStamp.get() + "User login");
                 String username = jsonMsg.getString(KeyData.KEY_USER_USERNAME);
                 String password = jsonMsg.getString(KeyData.KEY_USER_PASSWORD);
-                JSONObject obj = new UserControl().retrieveUserInfo(Action.hexToAscii(username), Action.hexToAscii(password));
-                
+                String deviceId = jsonMsg.getString(KeyData.KEY_USERLOG_DEVICEID);
+                //JSONObject obj = new UserControl().retrieveUserInfo(Action.hexToAscii(username), Action.hexToAscii(password), Action.hexToAscii(deviceId));
+                JSONObject obj = new UserControl().retrieveUserInfo(username, password, deviceId);
                 System.out.println(obj.toString());
                 MqttMessage mTemp = new MqttMessage(sendLoginAck(jsonMsg, obj).getBytes());
                 client.publish(Settings.mqttTopic, mTemp);
@@ -117,10 +114,12 @@ public class JavaClient implements MqttCallbackExtended {
                 
                 String username = jsonMsg.getString(KeyData.KEY_USER_USERNAME);
                 String veriCode = jsonMsg.getString(KeyData.KEY_USER_VERICODE);
-                System.out.println(Action.hexToAscii(username) + " : " + Action.hexToAscii(veriCode));
+                String type = jsonMsg.getString(KeyData.KEY_USER_VERITYPE);
+                String deviceId = jsonMsg.getString(KeyData.KEY_USERLOG_DEVICEID);
+               //System.out.println(Action.hexToAscii(username) + " : " + Action.hexToAscii(veriCode));
                 
-                JSONObject obj = new UserControl().compare2FACode(Action.hexToAscii(username), Action.hexToAscii(veriCode));
-                
+                //JSONObject obj = new UserControl().compare2FACode(Action.hexToAscii(username), Action.hexToAscii(veriCode), Action.hexToAscii(type), Action.hexToAscii(deviceId));
+                JSONObject obj = new UserControl().compare2FACode(username, veriCode, type, deviceId);
                 System.out.println(obj.toString());
                 MqttMessage mTemp = new MqttMessage(send2FACodeAck(jsonMsg, obj).getBytes());
                 client.publish(Settings.mqttTopic, mTemp);

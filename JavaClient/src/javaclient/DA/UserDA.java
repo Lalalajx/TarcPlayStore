@@ -24,48 +24,9 @@ public class UserDA {
             System.out.println(TimeStamp.get() + " [ERROR] [MYSQL] [" + UserDA.class.getSimpleName() + "] " + ex.getMessage());
         }
     }
-
-    //retrieve pass by userid
-    public User retrieveUserInfo(int userId) {
-        String queryStr = "SELECT * FROM " + tableName + " WHERE userId = ?";
-        User userInfo = new User();
-
-        try {
-            stmt = conn.prepareStatement(queryStr);
-            stmt.setInt(1, userId);
-
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                userInfo.setUserId(rs.getInt("UserId"));
-                userInfo.setUsername(rs.getString("Username"));
-                userInfo.setPassword(rs.getString("Password"));
-                userInfo.setEmail(rs.getString("Email"));
-                userInfo.setEmailVerificationStatus(rs.getString("EmailVerificationStatus"));
-                userInfo.setForgetPassStatus(rs.getString("ForgetPassStatus"));
-            }
-
-        } catch (SQLException se) {
-            System.out.println(TimeStamp.get() + " [ERROR] [MYSQL] [" + UserDA.class.getSimpleName() + "] " + se.getMessage());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(TimeStamp.get() + " [ERROR] [MYSQL] [" + UserDA.class.getSimpleName() + "] " + ex.getMessage());
-            }
-        }
-
-        return userInfo;
-
-    }
-
+    
     //retrieve pass by username
-        public User retrieveUserInfo(String username) {
+    public User retrieveUserInfo(String username) {
         String queryStr = "SELECT * FROM " + tableName + " WHERE username = ?";
         User userInfo = new User();
 
@@ -76,7 +37,6 @@ public class UserDA {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                userInfo.setUserId(rs.getInt("UserId"));
                 userInfo.setUsername(rs.getString("Username"));
                 userInfo.setPassword(rs.getString("Password"));
                 userInfo.setEmail(rs.getString("Email"));
@@ -116,7 +76,6 @@ public class UserDA {
 
             while (rs.next()) {
                 User t = new User();
-                t.setUserId(rs.getInt("userId"));
                 t.setUsername(rs.getString("username"));
                 t.setPassword(rs.getString("password"));
                 t.setEmail(rs.getString("email"));
@@ -144,16 +103,15 @@ public class UserDA {
 
     //update
     public void updateUser(User user) {
-        String queryStr = "UPDATE " + tableName + " SET Username = ?, Password = ?, Email = ?, EmailVerificationStatus = ?, ForgetPassStatus = ? WHERE UserID = ?";
+        String queryStr = "UPDATE " + tableName + " SET Password = ?, Email = ?, EmailVerificationStatus = ?, ForgetPassStatus = ? WHERE Username = ?";
 
         try {
             stmt = conn.prepareStatement(queryStr);
-            stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPassword());
-            stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getEmailVerificationStatus());
-            stmt.setString(5, user.getForgetPassStatus());
-            stmt.setInt(6, user.getUserId());
+            stmt.setString(1, user.getPassword());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getEmailVerificationStatus());
+            stmt.setString(4, user.getForgetPassStatus());
+            stmt.setString(5, user.getUsername());
             stmt.executeUpdate();
         } catch (SQLException se) {
             System.out.println(TimeStamp.get() + " [ERROR] [MYSQL] [" + UserDA.class.getSimpleName() + "] " + se.getMessage());
@@ -172,9 +130,9 @@ public class UserDA {
     }
 
 
-        public static void main(String[] args) {
-            Settings.parseSetting();
-            
-            System.out.println(new UserDA().retrieveUserInfo("jiaxin123").getPassword());
-    }
+//        public static void main(String[] args) {
+//            Settings.parseSetting();
+//            
+//            System.out.println(new UserDA().retrieveUserInfo("jiaxin123").getPassword());
+//    }
 }

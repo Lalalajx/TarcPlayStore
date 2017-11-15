@@ -1,12 +1,7 @@
 package javaclient.Class;
 
-/**
- *
- * @author ahxin_000
- */
 public class User {
 
-    private int userId;
     private String username;
     private String password;
     private String email;
@@ -17,17 +12,12 @@ public class User {
     public User() {
     }
 
-    public User(int userId, String username, String password, String email, String emailVerificationStatus, String forgetPassStatus) {
-        this.userId = userId;
+    public User(String username, String password, String email, String emailVerificationStatus, String forgetPassStatus) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.emailVerificationStatus = emailVerificationStatus;
         this.forgetPassStatus = forgetPassStatus;
-    }
-
-    public int getUserId() {
-        return userId;
     }
 
     public String getUsername() {
@@ -44,10 +34,6 @@ public class User {
 
     public String getEmailVerificationStatus() {
         return emailVerificationStatus;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public void setUsername(String username) {
@@ -84,7 +70,8 @@ public class User {
     
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", username=" + username + ", password=" + password + ", email=" + email + ", emailVerificationStatus=" + emailVerificationStatus + '}';
+        return "User{" + "username=" + username + ", password=" + password + ", email=" + email + ", emailVerificationStatus=" + emailVerificationStatus + ", forgetPassStatus=" + forgetPassStatus + ", veriCode=" + veriCode + '}';
     }
+  
 
 }

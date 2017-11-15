@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
 import javaclient.Class.User;
+import javaclient.Class.UserLog;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -16,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 public class Verification {
 
     public static ArrayList<User> veriList = new ArrayList<User>();
+    //public static ArrayList<UserLog> veriListUserLog = new ArrayList<UserLog>();
 
     public static void SendEmail(String subject, String body, String recipient) {
         String USER_NAME = "leejx-wa14@student.tarc.edu.my";  // GMail user name (just the part before "@gmail.com")

@@ -42,11 +42,13 @@ public class EmailVerificationActivity extends AppCompatActivity {
         Button btnEnter = (Button) findViewById(R.id.btn_enter2FACode);
 
         final String username = getIntent().getStringExtra(KeyData.KEY_USER_USERNAME);
+        final String veriType = getIntent().getStringExtra(KeyData.KEY_USER_VERITYPE);
+        final String deviceId = getIntent().getStringExtra(KeyData.KEY_USERLOG_DEVICEID);
 
         btnEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                verifyCode(username, veriCode.getText().toString());
+                verifyCode(username, veriCode.getText().toString(), veriType, deviceId);
             }
         });
 
@@ -85,7 +87,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
         });
     }
 
-    private void verifyCode(String username, String veriCode) {
+    private void verifyCode(String username, String veriCode, String veriType, String deviceId) {
         try {
             //build general command
             Command cmd = Action.findCommandByName("RAT_USER_AUTHREQUEST", this);
@@ -94,7 +96,8 @@ public class EmailVerificationActivity extends AppCompatActivity {
 
             obj.put(KeyData.KEY_USER_USERNAME, Action.asciiToHex("" + username));
             obj.put(KeyData.KEY_USER_VERICODE, Action.asciiToHex("" + veriCode));
-
+            obj.put(KeyData.KEY_USER_VERITYPE, Action.asciiToHex("" + veriType));
+            obj.put(KeyData.KEY_USERLOG_DEVICEID, Action.asciiToHex("" + deviceId));
 
             mqttHelper.publish(obj.toString());
 
@@ -120,16 +123,15 @@ public class EmailVerificationActivity extends AppCompatActivity {
                 if (mqttHelper.mqttClientId.equals(Action.hexToAscii(jsonMsg.getString(KeyData.KEY_RECIPIENT)))) {
                     //check whether object returned
                     JSONObject dataReturned = jsonMsg.getJSONObject(KeyData.KEY_DATA);
-                    if (dataReturned.getInt("emailVeriStatus") == 1){
+                    if (dataReturned.getInt("emailVeriStatus") == 1 && dataReturned.getInt("deviceVeriStatus") == 1) {
                         //verification correct
-                        JSONObject rtnObj = jsonMsg.getJSONObject(KeyData.KEY_DATA);
                         User user = new User();
-                        user.setUserId(Integer.parseInt(Action.hexToAscii("" + rtnObj.getInt(KeyData.KEY_USER_ID))));
-                        user.setUsername(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_USERNAME)));
-                        user.setPassword(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_PASSWORD)));
-                        user.setEmail(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_EMAIL)));
-                        user.setEmailVerificationStatus(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_EMAILVERIFICATIONSTATUS)));
-                        user.setForgetPassStatus(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_FORGETPASSSTATUS)));
+                        //user.setUserId(Integer.parseInt(Action.hexToAscii("" + rtnObj.getInt(KeyData.KEY_USER_ID))));
+                        user.setUsername(Action.hexToAscii(dataReturned.getString(KeyData.KEY_USER_USERNAME)));
+                        user.setPassword(Action.hexToAscii(dataReturned.getString(KeyData.KEY_USER_PASSWORD)));
+                        user.setEmail(Action.hexToAscii(dataReturned.getString(KeyData.KEY_USER_EMAIL)));
+                        user.setEmailVerificationStatus(Action.hexToAscii(dataReturned.getString(KeyData.KEY_USER_EMAILVERIFICATIONSTATUS)));
+                        user.setForgetPassStatus(Action.hexToAscii(dataReturned.getString(KeyData.KEY_USER_FORGETPASSSTATUS)));
 
                         //login user
                         LoggedInUser.Login(user);
@@ -137,20 +139,18 @@ public class EmailVerificationActivity extends AppCompatActivity {
                         //redirect to
                         finish();
                         startActivity(new Intent(this, MainPageActivity.class));
-                    }else {
-                        if (dataReturned.getInt("errorCode") == 2) {
-                            //incorrect 2faCode
-                            AlertDialog alertDialog = new AlertDialog.Builder(EmailVerificationActivity.this).create();
-                            alertDialog.setTitle("Error");
-                            alertDialog.setMessage("Wrong Verification Code! Please enter again!");
-                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            });
-                            alertDialog.show();
-                        }
+                    } else {
+                        //incorrect 2faCode
+                        AlertDialog alertDialog = new AlertDialog.Builder(EmailVerificationActivity.this).create();
+                        alertDialog.setTitle("Error");
+                        alertDialog.setMessage("Wrong Verification Code! Please enter again!");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        });
+                        alertDialog.show();
                     }
                 }
             }

@@ -3,6 +3,8 @@ package com.example.rongfu.tarucplaystore.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.Tag;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.widget.EditText;
 import com.example.rongfu.tarucplaystore.Action;
 import com.example.rongfu.tarucplaystore.Class.Command;
 import com.example.rongfu.tarucplaystore.Class.User;
+import com.example.rongfu.tarucplaystore.Class.UserLog;
 import com.example.rongfu.tarucplaystore.KeyData;
 import com.example.rongfu.tarucplaystore.LoggedInUser;
 import com.example.rongfu.tarucplaystore.MQTT.MqttHelper;
@@ -26,6 +29,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+
 public class LoginActivity extends AppCompatActivity {
 
     private final String TAG = LoginActivity.class.getSimpleName();
@@ -33,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     private MqttHelper mqttHelper;
     private EditText username;
     private EditText password;
+    private String veriType;
+    private String android_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +67,9 @@ public class LoginActivity extends AppCompatActivity {
                 forgetPass();
             }
         });
+
+        android_id = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ANDROID_ID);
 
         startMqtt();
     }
@@ -97,7 +107,9 @@ public class LoginActivity extends AppCompatActivity {
 
             obj.put(KeyData.KEY_USER_USERNAME, Action.asciiToHex("" + username.getText().toString()));
             obj.put(KeyData.KEY_USER_PASSWORD, Action.asciiToHex("" + password.getText().toString()));
+            obj.put(KeyData.KEY_USERLOG_DEVICEID, Action.asciiToHex(android_id));
 
+            Log.d(TAG, android_id);
 
             mqttHelper.publish(obj.toString());
 
@@ -125,23 +137,24 @@ public class LoginActivity extends AppCompatActivity {
                         //login success
                         JSONObject rtnObj = jsonMsg.getJSONObject(KeyData.KEY_DATA);
                         User user = new User();
-                        user.setUserId(Integer.parseInt(Action.hexToAscii("" + rtnObj.getInt(KeyData.KEY_USER_ID))));
+                        UserLog userLog = new UserLog();
+                        //user.setUserId(Integer.parseInt(Action.hexToAscii("" + rtnObj.getInt(KeyData.KEY_USER_ID))));
                         user.setUsername(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_USERNAME)));
                         user.setPassword(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_PASSWORD)));
                         user.setEmail(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_EMAIL)));
                         user.setEmailVerificationStatus(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_EMAILVERIFICATIONSTATUS)));
                         user.setForgetPassStatus(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USER_FORGETPASSSTATUS)));
+                        userLog.setLastLoginDateTime(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").parse(Action.hexToAscii(rtnObj.getString(KeyData.KEY_USERLOG_LASTLOGINDATETIME))));
 
                         //login user
                         LoggedInUser.Login(user);
 
-                        if (dataReturned.getString("forgetPassStatus") == "false") {
+                        if (dataReturned.getString("forgetPassStatus").equals("false")) {
                             //redirect to
                             finish();
                             startActivity(new Intent(this, MainPageActivity.class));
                         } else {
                             //redirect to change password activity
-
                             Intent intent = new Intent(LoginActivity.this, ChangeNewPasswordActivity.class);
                             intent.putExtra(KeyData.KEY_USER_USERNAME, username.getText().toString());
                             startActivity(intent);
@@ -163,9 +176,12 @@ public class LoginActivity extends AppCompatActivity {
                             alertDialog.show();
                         } else if (dataReturned.getInt("errorCode") == 1) {
                             //email not verified
+                            //set veritype
+                            veriType = "email";
+
                             AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
                             alertDialog.setTitle("Error");
-                            alertDialog.setMessage("Email Not Verified! Please Check Your Email!");
+                            alertDialog.setMessage("Email Not Verified! Please Check Your Email to verify it!");
                             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -173,6 +189,29 @@ public class LoginActivity extends AppCompatActivity {
                                     //redirect to (enter 2fa code)
                                     Intent intent = new Intent(LoginActivity.this, EmailVerificationActivity.class);
                                     intent.putExtra(KeyData.KEY_USER_USERNAME, username.getText().toString());
+                                    intent.putExtra(KeyData.KEY_USER_VERITYPE, veriType);
+                                    intent.putExtra(KeyData.KEY_USERLOG_DEVICEID, android_id);
+                                    startActivity(intent);
+                                }
+                            });
+                            alertDialog.show();
+                        }else if (dataReturned.getInt("errorCode") == 5) {
+                            //device not verified
+                            //set veritype
+                            veriType = "device";
+
+                            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                            alertDialog.setTitle("Error");
+                            alertDialog.setMessage("New device detected! Please Check Your Email to verify it!");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                    //redirect to (enter 2fa code)
+                                    Intent intent = new Intent(LoginActivity.this, EmailVerificationActivity.class);
+                                    intent.putExtra(KeyData.KEY_USER_USERNAME, username.getText().toString());
+                                    intent.putExtra(KeyData.KEY_USER_VERITYPE, veriType);
+                                    intent.putExtra(KeyData.KEY_USERLOG_DEVICEID, android_id);
                                     startActivity(intent);
                                 }
                             });

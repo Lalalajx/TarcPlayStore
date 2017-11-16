@@ -31,5 +31,13 @@ public class KeyData {
     public static String KEY_USER_VERICODE = "code";
     public static String KEY_USER_NEWPASSCODE = "newPassCode";
     public static String KEY_USER_NEWPASS = "newPass";
+    public static String KEY_USER_VERITYPE = "veriType";
+
+    //For UserLog Table
+    public static String KEY_USERLOG_OBJECT = "userLog";
+    public static String KEY_USERLOG_ID = "userLogId";
+    public static String KEY_USERLOG_USERNAME = "username";
+    public static String KEY_USERLOG_DEVICEID = "deviceId";
+    public static String KEY_USERLOG_LASTLOGINDATETIME = "lastLoginDateTime";
 
 }
